@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="jquery-3.5.1.min.js"></script>
+    <script>
+      $(function(){
+        $("#includedContent").load("operation.html"); 
+      });
+
+      function hello(){
+        console.log('Hello world! in func hello');
+      }
+
+      $(function(){
+        $('div[onload]').trigger('onload');
+      });
+
+    </script> 
+    <script src="distributor.js"></script>
+    <title>RectCream: hardware manager</title>
+  </head>
+  <body>
+    <div id="viewport">
+      <!-- Sidebar -->
+      <div id="sidebar">
+        <header>
+          <a href="#">Resources</a>
+        </header>
+        <ul class="nav">
+          <div id="sidebarContent"></div>
+        </ul>
+      </div>
+      <!-- Content -->
+      <div id="content">
+        <nav class="navbar navbar-default">
+          <div class="w-full max-w-xs" id="mainContent">
+            <div id="includedContent"></div>
+          </div>
+          <div class="w-full max-w-xs" id="mainResponse">
+          </div>
+        </nav>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,343 @@
+<html>
+<head>
+
+</head>
+
+<style>
+body {
+    background-color: #303030
+}
+
+.C_Note {
+    color:black;
+    position: absolute;
+    padding-top: 258px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    z-index: 50;
+    background-color: white;
+    cursor: pointer;
+    left: 366px;
+    top: 142px;
+}
+
+.D_Note {
+    color:black;
+    position: absolute;
+    padding-top: 258px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-left: 56px;
+    z-index: 51;
+    background-color: white;
+    cursor: pointer;
+    left: 369px;
+    top: 143px;
+}
+
+.E_Note {
+    color:black;
+    position: absolute;
+    padding-top: 258px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-left: 111px;
+    z-index: 53;
+    background-color: white;
+    cursor: pointer;
+    left: 373px;
+    top: 143px;
+}
+
+.F_Note {
+    color:black;
+    position: absolute;
+    padding-top: 258px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-left: 167px;
+    z-index: 54;
+    background-color: white;
+    cursor: pointer;
+    left: 373px;
+    top: 143px;
+}
+
+.G_Note {
+    color:black;
+    position: absolute;
+    padding-top: 258px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-left: 223px;
+    z-index: 56;
+    background-color: white;
+    cursor: pointer;
+    left: 373px;
+    top: 143px;
+}
+
+.A_Note {
+    color:black;
+    position: absolute;
+    padding-top: 258px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-left: 279px;
+    z-index: 57;
+    background-color: white;
+    cursor: pointer;
+    left: 373px;
+    top: 143px;
+}
+
+
+.B_Note {
+    color:black;
+    position: absolute;
+    padding-top: 258px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-left: 335px;
+    z-index: 58;
+    background-color: white;
+    cursor: pointer;
+    left: 373px;
+    top: 143px;
+}
+
+
+.C5_Note {
+    color:black;
+    position: absolute;
+    padding-top: 258px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-left: 391px;
+    z-index: 59;
+    background-color: white;
+    cursor: pointer;
+    left: 373px;
+    top: 143px;
+}
+
+.Cs_Note {
+    color:white;
+    position: absolute;
+    margin-left: 26px;
+    padding-top: 180px;
+    padding-bottom: 20px;
+    padding-right: 16px;
+    padding-left: 16px;
+    z-index: 52;
+    background-color: black;
+    cursor: pointer;
+    left: 364px;
+    top: 142px;
+}
+
+.Ds_Note {
+    color:white;
+    position: absolute;
+    margin-left: 90px;
+    padding-top: 180px;
+    padding-bottom: 20px;
+    padding-right: 16px;
+    padding-left: 16px;
+    z-index: 54;
+    background-color: black;
+    cursor: pointer;
+    left: 364px;
+    top: 142px;
+}
+
+.Fs_Note {
+    color:white;
+    position: absolute;
+    margin-left: 202px;
+    padding-top: 180px;
+    padding-bottom: 20px;
+    padding-right: 16px;
+    padding-left: 16px;
+    z-index: 60;
+    background-color: black;
+    cursor: pointer;
+    left: 364px;
+    top: 142px;
+}
+
+.Gs_Note {
+    color:white;
+    position: absolute;
+    margin-left: 258px;
+    padding-top: 180px;
+    padding-bottom: 20px;
+    padding-right: 16px;
+    padding-left: 16px;
+    z-index: 61;
+    background-color: black;
+    cursor: pointer;
+    left: 364px;
+    top: 142px;
+}
+
+.As_Note {
+    color:white;
+    position: absolute;
+    margin-left: 314px;
+    padding-top: 180px;
+    padding-bottom: 20px;
+    padding-right: 16px;
+    padding-left: 16px;
+    z-index: 62;
+    background-color: black;
+    cursor: pointer;
+    left: 364px;
+    top: 142px;
+}
+</style>
+
+<body>
+    <button class="C_Note" OnClick="submitHelper.submitClick(this, 'c')">C</button>
+    <button class="D_Note" OnClick="submitHelper.submitClick(this, 'd')">D</button>
+    <button class="E_Note" OnClick="submitHelper.submitClick(this, 'e')">E</button>
+    <button class="F_Note" OnClick="submitHelper.submitClick(this, 'f')">F</button>
+    <button class="G_Note" OnClick="submitHelper.submitClick(this, 'g')">G</button>
+    <button class="A_Note" OnClick="submitHelper.submitClick(this, 'a')">A</button>
+    <button class="B_Note" OnClick="submitHelper.submitClick(this, 'b')">B</button>
+    <button class="C5_Note" OnClick="submitHelper.submitClick(this, 'c5')">C5</button>
+    <button class="Cs_Note" OnClick="submitHelper.submitClick(this, 'cs')">C#</button>
+    <button class="Ds_Note" OnClick="submitHelper.submitClick(this, 'ds')">D#</button>
+    <button class="Fs_Note" OnClick="submitHelper.submitClick(this, 'fs')">F#</button>
+    <button class="Gs_Note" OnClick="submitHelper.submitClick(this, 'gs')">G#</button>
+    <button class="As_Note" OnClick="submitHelper.submitClick(this, 'as')">A#</button>
+    <div id="div1"><h1 style="color: white"><b>RectCream webpage Piano</b></h1></div>
+</body>
+
+<script>
+var submitHelper = {
+
+    tone_map: {c: {
+        unit: 'us',
+        period: 3822,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }, d: {
+        unit: 'us',
+        period: 3405,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }, e: {
+        unit: 'us',
+        period: 3033,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }, f: {
+        unit: 'us',
+        period: 2863,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }, g: {
+        unit: 'us',
+        period: 2551,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }, a: {
+        unit: 'us',
+        period: 2272,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }, b: {
+        unit: 'us',
+        period: 2024,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }, c5: {
+        unit: 'us',
+        period: 1911,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }, cs: {
+        unit: 'us',
+        period: 3607,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }, ds: {
+        unit: 'us',
+        period: 3214,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }, fs: {
+        unit: 'us',
+        period: 2702,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }, gs: {
+        unit: 'us',
+        period: 2407,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }, as: {
+        unit: 'us',
+        period: 2145,
+        duration_a: 1500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 30
+    }},
+
+    submitClick: async function(object, tone) {
+        let volumn = 0.5
+        let request = '/hardware/operation'
+        let body = {
+        'event': 'now',
+        'actions': [['pwm', 1, 'enabled', this.tone_map[tone].unit, this.tone_map[tone].period, parseInt(this.tone_map[tone].period * 0.5 * volumn),
+                    this.tone_map[tone].duration_b, this.tone_map[tone].duration_c, this.tone_map[tone].running_time]]
+        }
+        try {
+        const response = await fetch(request, {
+            method: 'post',
+            body: JSON.stringify(body)
+        }).then(response => response.text())
+        .then(response => {
+            document.getElementById('mainResponse').innerHTML += timerHelpers.responseDisplay(response);
+        });
+        } catch(err) {
+            console.error(`Error: ${err}`);
+        }
+    }
+}
+</script>
+</html>
