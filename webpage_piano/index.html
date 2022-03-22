@@ -203,6 +203,11 @@ body {
     left: 364px;
     top: 142px;
 }
+
+.slider {
+    max-width: 100px;
+}
+
 </style>
 
 <body>
@@ -219,10 +224,29 @@ body {
     <button class="Fs_Note" OnClick="submitHelper.submitClick(this, 'fs')">F#</button>
     <button class="Gs_Note" OnClick="submitHelper.submitClick(this, 'gs')">G#</button>
     <button class="As_Note" OnClick="submitHelper.submitClick(this, 'as')">A#</button>
-    <div id="div1"><h1 style="color: white"><b>RectCream webpage Piano</b></h1></div>
+    <div id="div1"><h1 style="color: white; margin-left: 350px"><b>锐客创新-网页钢琴</b></h1></div>
+    <div id="volumn" style="margin-left: 350px">
+        <span style="color:white">音量</span>
+        <input type="range" min="1" max="100" value="50" class="slider" id="myRange" onChange="volumnChange(this.value)">
+    </div>
 </body>
 
 <script>
+// var slider = document.getElementById("myRange");
+// var output = document.getElementById("demo");
+// output.innerHTML = slider.value; // Display the default slider value
+
+// Update the current slider value (each time you drag the slider handle)
+// slider.oninput = function() {
+//   output.innerHTML = this.value;
+// }
+
+var volumn = 50
+
+function volumnChange(new_volumn) {
+    volumn = new_volumn
+}
+
 var submitHelper = {
 
     tone_map: {c: {
@@ -319,11 +343,10 @@ var submitHelper = {
     }},
 
     submitClick: async function(object, tone) {
-        let volumn = 0.5
         let request = '/hardware/operation'
         let body = {
         'event': 'now',
-        'actions': [['pwm', 1, 'enabled', this.tone_map[tone].unit, this.tone_map[tone].period, parseInt(this.tone_map[tone].period * 0.5 * volumn),
+        'actions': [['pwm', 1, 'enabled', this.tone_map[tone].unit, this.tone_map[tone].period, parseInt(this.tone_map[tone].period * 0.5 * volumn / 100),
                     this.tone_map[tone].duration_b, this.tone_map[tone].duration_c, this.tone_map[tone].running_time]]
         }
         try {
