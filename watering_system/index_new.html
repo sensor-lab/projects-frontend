@@ -99,6 +99,40 @@ button {
 	}
 }
 
+.form {
+  color: var(--font-color);
+  position: relative;
+  border-radius: 15px;
+  background: var(--button-bg-color);
+  font-weight: 700;
+  transition: all 100ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--button-shadow);
+  text-align: center;
+}
+
+.form input {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  height: 30px;
+}
+
+.form select {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  height: 30px;
+}
+
+.form button {
+  background: var(--button-bg-color);
+  box-shadow: var(--button-shadow);
+  border: 1px solid #ccc;
+  border-radius: 25%;
+  height: 30px;
+  width: 60px;
+  text-align: center;
+  margin: 20px;
+}
+
 .button {
   color: var(--font-color);
   position: relative;
@@ -247,15 +281,38 @@ button {
         </div>
       </div>
 
-      <form>
-        <label for="fname">First name:</label><br>
-        <input type="text" id="fname" name="fname"><br>
-        <label for="lname">Last name:</label><br>
-        <input type="text" id="lname" name="lname">
-      </form>
+      <div class="form">
+        <h2 class="app-heading" style="padding-top:2rem">单次浇水</h2>
+        <form style="padding: 3rem">
+          <label for="fname">浇水时长：(单位：秒)</label><br>
+          <input type="text" id="duration" name="duration"><br>
+          <button>发送</button>
+        </form>
+      </div>
+
+      <div class="form">
+        <h2 class="app-heading" style="padding-top:2rem">定时浇水</h2>
+        <form style="padding: 3rem">
+          <label for="fname">浇水时长：(单位：秒)</label><br>
+          <input type="text" id="fname" name="fname"><br>
+          <label for="fname">时间选择：</label><br>
+          <select style="width:100%">
+            <option value="one_hour">每小时</option>
+            <option value="six_hour">每六小时</option>
+            <option value="twelve_hour">每十二小时</option>
+            <option value="daily">每天</option>
+            <option value="weekly">每周</option>
+          </select>
+          <button>发送</button>
+        </form>
+      </div>
 
     </div>
   </div>
 </div>
 </body>
+
+<script>
+
+</script>
 </html>
