@@ -37,80 +37,78 @@ function findAllOccurance(binary) {
 var submitHelper = {
 
   submitClick: async function(object, tone) {
-    // let request = '/hardware/operation'
-    // let body = {
-    //   'event': 'now',
-    //   'actions': [["gpio", 0, "output", 0],["delay", 0, "ms", 1],["onewire", 0, "us", 10, 170]]
-    // }
-    // try {
-    //   const response = await fetch(request, {
-    //     method: 'post',
-    //     body: JSON.stringify(body)
-    //   })
-    //   .then(response => response.text())
-    //   .then(response => {
-    //     console.log(response)
-    //   });
-    // } catch(err) {
-    //   console.error(`Error: ${err}`);
-    // }
-    let response = {
-      "event":"now",
-      "result":[[0],["succeeded"],[135,136,153,145,28,66,102,121,227,136,227,51,34,34,35,207,60,68,113,17,17,0]]
+    let request = '/hardware/operation'
+    let body = {
+      'event': 'now',
+      'actions': [["gpio", 0, "output", 0],["delay", 0, "ms", 1],["onewire", 0, "us", 10, 170]]
     }
-    var binary_value = "";
-    for (let key in response['result'][2])
-    {
-      binary_value += dec2bin(response['result'][2][key])
-    }
-    // 1 or 2 continuous '1' is 0, 3 or more than 3 continous '1' is 1
-    var humidity = ""
-    var temperature = ""
-    let prev_tracker = []
-    occurrance = findAllOccurance(binary_value)
-    for (let i = 0; i < occurrance.length; i++) {
-      if (occurrance[i] > 8) {
-        // valid
-        if (humidity.length < 16) {
-          // humidy data
-          if (prev_tracker.length == 0) {
-            prev_tracker.push(occurrance[i])
-          } else if (occurrance[i] == prev_tracker[prev_tracker.length - 1] + 1) {
-            prev_tracker.push(occurrance[i])
-          } else {
-            if (prev_tracker.length > 2) {
-              humidity = humidity + "1"
-            } else {
-              humidity = humidity + "0"
-            }
-            prev_tracker = []
-            prev_tracker.push(occurrance[i])
-          }
-        } else if (temperature.length < 16) {
-          // temperature data
-          if (occurrance[i] == prev_tracker[prev_tracker.length - 1] + 1) {
-            prev_tracker.push(occurrance[i])
-          } else {
-            if (prev_tracker.length > 2) {
-              temperature = temperature + "1"
-            } else {
-              temperature = temperature + "0"
-            }
-            prev_tracker = []
-            prev_tracker.push(occurrance[i])
-          }
-        } else {
-          // crc, ignorable
-          break;
+    try {
+      const response = await fetch(request, {
+        method: 'post',
+        body: JSON.stringify(body)
+      })
+      .then(response => response.json())
+      .then(response => {
+        console.log(response)
+        var binary_value = "";
+        for (let key in response['result'][2])
+        {
+          binary_value += dec2bin(response['result'][2][key])
         }
-      } else {
-        // pull high before 80us is starting signal sent by temperature sensor
-      }
+
+        // 1 or 2 continuous '1' is 0, 3 or more than 3 continous '1' is 1
+        var humidity = ""
+        var temperature = ""
+        let prev_tracker = []
+        occurrance = findAllOccurance(binary_value)
+        for (let i = 0; i < occurrance.length; i++) {
+          if (occurrance[i] > 8) {
+            // valid
+            if (humidity.length < 16) {
+              // humidy data
+              if (prev_tracker.length == 0) {
+                prev_tracker.push(occurrance[i])
+              } else if (occurrance[i] == prev_tracker[prev_tracker.length - 1] + 1) {
+                prev_tracker.push(occurrance[i])
+              } else {
+                if (prev_tracker.length > 2) {
+                  humidity = humidity + "1"
+                } else {
+                  humidity = humidity + "0"
+                }
+                prev_tracker = []
+                prev_tracker.push(occurrance[i])
+              }
+            } else if (temperature.length < 16) {
+              // temperature data
+              if (occurrance[i] == prev_tracker[prev_tracker.length - 1] + 1) {
+                prev_tracker.push(occurrance[i])
+              } else {
+                if (prev_tracker.length > 2) {
+                  temperature = temperature + "1"
+                } else {
+                  temperature = temperature + "0"
+                }
+                prev_tracker = []
+                prev_tracker.push(occurrance[i])
+              }
+            } else {
+              // crc, ignorable
+              break;
+            }
+          } else {
+            // pull high before 80us is starting signal sent by temperature sensor
+          }
+        }
+
+        console.log(parseInt(humidity, 2) / 10)
+        console.log(parseInt(temperature, 2) / 10)
+        document.getElementById('temp_value').innerHTML = parseInt(temperature, 2) / 10;
+        document.getElementById('humidity_value').innerHTML = parseInt(humidity, 2) / 10;
+      });
+    } catch(err) {
+      console.error(`Error: ${err}`);
     }
-    console.log(parseInt(humidity, 2) / 10)
-    console.log(parseInt(temperature, 2) / 10)
-    document.getElementById('temp_value').innerHTML = parseInt(temperature, 2) / 10;
-    document.getElementById('humidity_value').innerHTML = parseInt(humidity, 2) / 10;
   }
 }
 </script>
