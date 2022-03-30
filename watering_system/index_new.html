@@ -1,0 +1,261 @@
+<html>
+<head>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<style>
+:root {
+  --font-color: #222;
+  --bg-color: #f2f3f7;
+  --button-bg-color: #f2f3f7;
+  --button-shadow:
+    -6px -6px 8px rgba(255, 255, 255, 0.9),
+    5px 5px 8px rgba(0, 0, 0, 0.07);
+}
+
+[data-theme="dark"] {
+  --font-color: #fff;
+  --bg-color: #181818;
+  --button-bg-color: #121212;
+  --button-shadow:
+    -2px -2px 4px rgba(255, 255, 255, 0.05),
+    0 0 10px 10px rgba(255, 255, 255, 0.005),
+    2px 2px 8px rgba(60, 60, 60, 0.1);
+}
+
+html {
+  box-sizing: border-box;
+  font-size: 18px;
+  font-family: 'Roboto', sans-serif;
+  color: var(--font-color);
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  background-color: #f2f2f2;
+}
+
+.color-cool {
+  color: #077dfe;
+}
+
+.color-warm {
+  color: #ff7a00;
+}
+
+.container {
+  display: flex;
+  justify-content: space-evenly;
+  padding-top: 25px;
+  align-items: center;
+  flex-direction: column;
+}
+
+@media screen and (min-width:800px) {
+  .container {
+    flex-direction: row;
+  }
+}
+
+.app-container {
+  background-color: var(--bg-color);
+  border-radius: 40px;
+  box-shadow: -2px -2px 4px 0px #ffffff, 50px 50px 50px 0px rgba(0, 0, 0, .25);
+  display: block;
+  flex: 1;
+  min-height: 500px;
+  max-width: 350px;
+  margin-bottom: 25px;
+  overflow: hidden;
+  padding: 30px;
+}
+
+.app-top-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.app-heading {
+  color: var(--font-color);
+  display: block;
+  flex: 1;
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0;
+  text-align: center;
+}
+
+button {
+	border: 0;
+	&:focus {
+		border: none;
+		outline: 0 !important;
+		outline-style: none;
+	}
+}
+
+.button {
+  color: var(--font-color);
+  position: relative;
+  border-radius: 15px;
+  background: var(--button-bg-color);
+  font-weight: 700;
+  transition: all 100ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--button-shadow);
+  cursor: pointer;
+
+  &.button-link {
+    color: #067CF8;
+    display: block;
+    font-size: 17px;
+    margin: 30px 0 0;
+    padding: 20px 0;
+    width: 100%;
+  }
+
+  &.button-small {
+    color: #6D6E74;
+    font-size: 22px;
+    line-height: 40px;
+    width: 40px;
+    height: 40px;
+  }
+
+  &.button-large {
+    display: flex;
+    font-size: 20px;
+    flex-direction: column;
+    padding: 15px;
+    text-align: left;
+    width: 45%;
+
+    & svg {
+      margin-bottom: 40px;
+      width: 30px;
+    }
+  }
+}
+
+.button-dial {
+  border-radius: 10%;
+  display: flex;
+  height: 270px;
+  margin: 35px auto;
+  align-items: center;
+  justify-content: center;
+  width: 270px;
+}
+
+.button-dial-top {
+  background: var(--button-bg-color);
+  box-shadow: var(--button-shadow);
+  border-radius: 50%;
+  width: 70%;
+  height: 70%;
+  margin: 0 auto;
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  text-align: center;
+  z-index: 5;
+}
+
+.button-dial-label {
+  color: #067CF8;
+  font-size: 20px;
+  fill: #067CF8;
+  position: relative;
+  z-index: 10;
+}
+
+.button-block {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 24px;
+  width: 100%;
+
+  span {
+    font-size: 16px;
+  }
+}
+
+.subtle {
+  color: #6D6E74;
+}
+
+.flex-button-container {
+  display: flex;
+  justify-content: space-between;
+}
+</style>
+<body>
+<div class="container">
+  <div class="app-container">
+    <div class="app-top-bar">
+      <button class="button button-small">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <h1 class="app-heading">锐客创新</h1>
+    </div>
+    <div class="app-top-bar">
+      <button class="button button-small">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <h2 class="app-heading">自动浇花系统</h2>
+    </div>
+    <div class="app-content">
+      <button class="button button-block">
+        <span class="subtle">Time</span> <span>2022/03/04</span> <div class="button button-small"><i class="fas fa-chevron-right"></i></div>
+      </button>
+      <div class="button button-dial">
+        <div class="button-dial-top"></div>
+        <div class="button-dial-label">
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 100 125" enable-background="new 0 0 100 100" xml:space="preserve"><g><path d="M60.333,68.349V11.111C60.333,4.984,55.349,0,49.222,0c-6.126,0-11.111,4.984-11.111,11.111v57.237   c-4.15,3.323-6.667,8.397-6.667,13.874c0,9.802,7.975,17.777,17.777,17.777C59.024,100,67,92.024,67,82.223   C67,76.746,64.482,71.672,60.333,68.349z M44.778,48.363h4.444v-4.444h-4.444V35.03h4.444v-4.444h-4.444v-8.889h4.444v-4.444   h-4.444v-6.142c0-2.455,1.99-4.444,4.444-4.444c2.455,0,4.445,1.989,4.445,4.444v41.111h-8.889V48.363z"/></g></svg>
+          7&deg;F
+        </div>
+      </div>
+
+      <div class="button button-dial">
+        <div class="button-dial-top"></div>
+        <div class="button-dial-label">
+          <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 328.611 328.611" style="enable-background:new 0 0 328.611 328.611;" xml:space="preserve">
+            <g>
+              <path d="M209.306,50.798c-2.452-3.337-7.147-4.055-10.485-1.602c-3.338,2.453-4.055,7.147-1.603,10.485
+                c54.576,74.266,66.032,123.541,66.032,151.8c0,27.691-8.272,52.794-23.293,70.685c-17.519,20.866-42.972,31.446-75.651,31.446
+                c-73.031,0-98.944-55.018-98.944-102.131c0-52.227,28.103-103.234,51.679-136.829c25.858-36.847,52.11-61.415,52.37-61.657
+                c3.035-2.819,3.209-7.565,0.39-10.6c-2.819-3.034-7.565-3.209-10.599-0.39c-1.11,1.031-27.497,25.698-54.254,63.765
+                c-24.901,35.428-54.586,89.465-54.586,145.71c0,31.062,9.673,59.599,27.236,80.353c20.361,24.061,50.345,36.779,86.708,36.779
+                c36.794,0,66.926-12.726,87.139-36.801c17.286-20.588,26.806-49.117,26.806-80.33C278.25,156.216,240.758,93.597,209.306,50.798z"
+                />
+              <path d="M198.43,148.146l-95.162,95.162c-2.929,2.929-2.929,7.678,0,10.606c1.465,1.464,3.385,2.197,5.304,2.197
+                s3.839-0.732,5.304-2.197l95.162-95.162c2.929-2.929,2.929-7.678,0-10.606C206.107,145.217,201.359,145.217,198.43,148.146z"/>
+              <path d="M191.965,207.899c-13.292,0-24.106,10.814-24.106,24.106s10.814,24.106,24.106,24.106s24.106-10.814,24.106-24.106
+                S205.257,207.899,191.965,207.899z M191.965,241.111c-5.021,0-9.106-4.085-9.106-9.106s4.085-9.106,9.106-9.106
+                s9.106,4.085,9.106,9.106S196.986,241.111,191.965,241.111z"/>
+              <path d="M125.178,194.162c13.292,0,24.106-10.814,24.106-24.106s-10.814-24.106-24.106-24.106s-24.106,10.814-24.106,24.106
+                S111.886,194.162,125.178,194.162z M125.178,160.949c5.021,0,9.106,4.085,9.106,9.106s-4.085,9.106-9.106,9.106
+                c-5.021,0-9.106-4.085-9.106-9.106S120.156,160.949,125.178,160.949z"/>
+            </g>
+          </svg>
+          43%
+        </div>
+      </div>
+
+      <form>
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname">
+      </form>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>
