@@ -287,7 +287,7 @@ button {
         <div style="padding: 3rem" target="dummyframe" id="">
           <label for="duration_once">浇水时间：(单位：秒)</label><br>
           <input type="text" id="duration_once" name="duration_once"><br>
-          <input type="submit" value="发送" onClick="watering_once(this)"><br>
+          <input type="submit" value="发送" onClick="wateringOnce(this)"><br>
         </div>
       </div>
 
@@ -304,7 +304,7 @@ button {
             <option value="daily" selected>每天</option>
             <option value="weekly">每周</option>
           </select>
-          <input type="submit" value="发送" onClick="watering_schedule(this)"><br>
+          <input type="submit" value="发送" onClick="wateringSchedule(this)"><br>
         </div>
       </div>
 
@@ -419,7 +419,7 @@ async function getTemperatureHumidity() {
 getTemperatureHumidity()
 setInterval(getTemperatureHumidity, 5000);
 
-async function watering_once(object) {
+async function wateringOnce(object) {
   let duration = document.getElementById("duration_once").value
   if (!duration) {
     alert("请填写浇水时间，单位：秒");
@@ -445,7 +445,7 @@ async function watering_once(object) {
   }
 }
 
-async function watering_schedule(object) {
+async function wateringSchedule(object) {
   let duration = document.getElementById("duration_schedule").value
   let schedule_time = document.getElementById("schedule_time").value
   if (!duration) {
