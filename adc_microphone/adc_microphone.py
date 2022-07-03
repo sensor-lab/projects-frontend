@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import wave, json, socket, requests, asyncore, logging
+import wave, json, socket, requests, asyncore, logging, os
 from enum import Enum
 from scipy.fft import rfft, rfftfreq
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as mfm
 import numpy as np
 
 RECTCREAM_IP_ADDRESS = '192.168.1.102'
@@ -12,6 +13,7 @@ SAMPLE_RATE = 2000 # hertz
 SAMPLE_WIDTH = 2    # 16-bit
 NUM_OF_AUDIO_CHANNEL = 1
 RCV_BUFFER_SIZE = 1460
+ADC_FILTER_OUT_THRESHOLD=20
 BACKLOG = 5
 
 adc_samples = []
@@ -109,7 +111,8 @@ class AdcMicrophone(asyncore.dispatcher):
 
     def normalize_adc_samples(self):
         for i in range(len(self.samples)):
-            temp_data = np.int16(self.samples[i] - self.offset).item()
+            # sometimes ADC gives very low samples, filter them out
+            temp_data = np.int16(self.samples[i] - self.offset).item() if self.samples[i] > ADC_FILTER_OUT_THRESHOLD else 0
             self.samples[i] = temp_data
 
     def save_wave(self, file_name='sound.wav', wave_data=None):
@@ -135,17 +138,24 @@ if __name__ == '__main__':
     adc_microphone.normalize_adc_samples()
     adc_microphone.save_wave()
 
-    # plotting
-    fig, axs = plt.subplots(2)
+    font_path = os.path.join(os.getcwd(), os.path.dirname(__file__), 'AaKaiSong.ttf')
+    prop = mfm.FontProperties(fname=font_path,size=10)
 
-    axs[0].set_title('Sounds waveform')
+    # plotting
+    fig, axs = plt.subplots(ncols=2)
+
+    axs[0].set_title(u'声音信号ADC采样',fontproperties=prop)
     samples = adc_microphone.get_samples()
     timeline_x_axis = np.linspace(0, DURATION, len(samples), endpoint=False)
     axs[0].plot(timeline_x_axis, samples)
+    axs[0].set_xlabel(u'时间(秒)',fontproperties=prop)
+    axs[0].set_ylabel(u'ADC采样值',fontproperties=prop)
 
-    axs[1].set_title('FFT convert')
+    axs[1].set_title(u'傅立叶变换',fontproperties=prop)
     freq_y_axis, freq_x_axis = adc_microphone.fft_transform()
     axs[1].plot(freq_x_axis, np.abs(freq_y_axis))
+    axs[1].set_xlabel(u'频率(Hz)',fontproperties=prop)
+    axs[1].set_ylabel(u'幅度',fontproperties=prop)
 
     plt.show()
 
