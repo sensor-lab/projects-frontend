@@ -56,16 +56,16 @@ homeName.innerHTML = '主队';
 awayName.innerHTML = '客队';
 scores = [Number(homeScore.innerHTML), Number(awayScore.innerHTML)]
 
-DISPLAY_ZERO = 36
-DISPLAY_ONE = 175
-DISPLAY_TWO = 70
-DISPLAY_THREE = 14
-DISPLAY_FOUR = 141
-DISPLAY_FIVE = 28
-DISPLAY_SIX = 20
-DISPLAY_SEVEN = 174
-DISPLAY_EIGHT = 4
-DISPLAY_NINE = 140
+DISPLAY_ZERO = 40
+DISPLAY_ONE = 235
+DISPLAY_TWO = 49
+DISPLAY_THREE = 161
+DISPLAY_FOUR = 226
+DISPLAY_FIVE = 164
+DISPLAY_SIX = 36
+DISPLAY_SEVEN = 233
+DISPLAY_EIGHT = 32
+DISPLAY_NINE = 224
 MAX_NUMBER = 10
 
 seven_segment_display(scores)
@@ -115,7 +115,7 @@ async function seven_segment_display(numbers) {
     })
     let body = {
         'event': 'now',
-        'actions': [['gpio',2,'output',0],['gpio',2,'output',1],action,['gpio',1, 'output',1],['gpio',1, 'output',0]]
+        'actions': [['gpio',1,'output',0],['gpio',1,'output',1],action,['gpio',0, 'output',1],['gpio',0, 'output',0]]
     }
     try {
         const response = await fetch(request, {
