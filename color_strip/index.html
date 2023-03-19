@@ -8,9 +8,9 @@
     <meta name="description" content="" />
     <meta name="keywords" content="" />
 
-    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css"/>
+    <link href="./tailwind.min.css" rel="stylesheet"/>
     <!--Replace with your tailwind.css once created-->
-    <link href="https://unpkg.com/@tailwindcss/custom-forms/dist/custom-forms.min.css" rel="stylesheet" />
+    <link href="./custom-forms.min.css" rel="stylesheet" />
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
@@ -47,6 +47,14 @@
 
           <form class="bg-gray-900 opacity-75 w-full shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
             <div class="mb-4">
+              <label class="block text-blue-300 py-2 font-bold mb-2" for="gpio_index">
+                GPIO Index<input
+                class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                id="gpio_index"
+                type="number"
+              />
+              </label>
+
               <label class="block text-blue-300 py-2 font-bold mb-2" for="led_color">
                 灯带颜色<input
                 class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
@@ -65,7 +73,7 @@
               </label>
             </div>
 
-            <label class="block text-blue-300 py-2 font-bold mb-2" for="led_number">
+            <label class="block text-blue-300 py-2 font-bold mb-2">
               动态更新  <input type="checkbox" name="dynamic" id="dynamic_enabled" value="enable" onChange="SettingDynamic()"/>
             </label>
 
@@ -109,6 +117,7 @@
     let blink_color_global = 0
     let blink_index_global = 0
     let interval_global = null
+    let gpio_index = 0
 
     SettingDynamic()
     function SettingDynamic() {
@@ -124,17 +133,18 @@
     }
 
     async function SettingLeds() {
+      gpio_index = document.getElementById("gpio_index").value 
       led_color = document.getElementById("led_color").value
       led_number = document.getElementById("led_number").value
-      await setupAdvanceOutput()
-      await setLedsConstant(parseInt(led_color.substr(1), 16), parseInt(led_number))
+      await setupAdvanceOutput(parseInt(gpio_index))
+      await setLedsConstant(parseInt(gpio_index), parseInt(led_color.substr(1), 16), parseInt(led_number))
     }
 
-    async function setupAdvanceOutput() {
+    async function setupAdvanceOutput(gpio_index) {
       let request = '/hardware/operation'
       let body = {
         'event': 'now',
-        'actions': [["advanceoutput", 0, "setup", "one", "us", 2.5, 1.2],["advanceoutput", 0, "setup", "zero", "us", 2.5, 0.5]]
+        'actions': [["advance_output", gpio_index, "setup","us","zero", "2.5","0.7", "one","2.5","1.2"]]
       }
       try {
         const response = await fetch(request, {
@@ -150,9 +160,9 @@
       }
     }
 
-    async function blink_fun() {
+    async function blink_fun(gpio_index) {
       let request = '/hardware/operation'
-      let action = ["advanceoutput", 0, "start", 8]
+      let action = ["advance_output", gpio_index, "start"]
       action.push(num_of_leds_global * 3)   // each led need R, G and B field
       color_red = (base_color_global >> 16) & 0xFF
       color_green = (base_color_global >> 8) & 0xFF
@@ -194,7 +204,7 @@
         }
     }
 
-    async function setLedsConstant(color, number) {
+    async function setLedsConstant(gpio_index, color, number) {
       color_red = (color >> 16) & 0xFF
       color_green = (color >> 8) & 0xFF
       color_blue = color & 0xFF
@@ -204,16 +214,16 @@
       base_color_global = color
 
       let request = '/hardware/operation'
-      let action = ["advanceoutput", 0, "start", 8]
+      let action = ["advance_output", gpio_index, "start"]
 
       if (document.getElementById("dynamic_enabled").checked) {
         /* start interval_global */
         if (document.getElementById("led_blink_freq").value === "slow") {
-          interval_global = setInterval(blink_fun, 1000);
+          interval_global = setInterval(blink_fun, 1000, gpio_index);
         } else if (document.getElementById("led_blink_freq").value === 'medium') {
-          interval_global = setInterval(blink_fun, 750);
+          interval_global = setInterval(blink_fun, 750, gpio_index);
         } else {
-          interval_global = setInterval(blink_fun, 500);
+          interval_global = setInterval(blink_fun, 500, gpio_index);
         }
 
       } else {
