@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>灯带控制器</title>
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+
+    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css"/>
+    <!--Replace with your tailwind.css once created-->
+    <link href="https://unpkg.com/@tailwindcss/custom-forms/dist/custom-forms.min.css" rel="stylesheet" />
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
+
+      html {
+        font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      }
+    </style>
+  </head>
+
+  <body class="leading-normal tracking-normal text-indigo-400 m-6 bg-cover bg-fixed" style="background-image: url('header.png');">
+    <div class="h-full">
+      <!--Nav-->
+      <div class="w-full container mx-auto">
+        <div class="w-full flex items-center justify-between">
+          <a class="flex items-center text-indigo-400 no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">灯带控制器</span>
+          </a>
+        </div>
+      </div>
+
+      <!--Main-->
+      <div class="container pt-24 md:pt-36 mx-auto flex flex-wrap flex-col md:flex-row items-center">
+        <div class="flex flex-col w-full xl:w-4/5 justify-center lg:items-start overflow-y-hidden">
+          <h1 class="my-4 text-3xl md:text-5xl text-white opacity-75 font-bold leading-tight text-center md:text-left">
+            设定
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">
+              灯带颜色
+            </span>
+          </h1>
+          <p class="leading-normal text-base md:text-2xl mb-8 text-center md:text-left">
+            选择灯带的颜色和灯带上LED的数量
+          </p>
+
+          <form class="bg-gray-900 opacity-75 w-full shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
+            <div class="mb-4">
+              <label class="block text-blue-300 py-2 font-bold mb-2" for="led_color">
+                灯带颜色<input
+                class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                id="led_color"
+                type="color"
+                value="#e66465"
+              />
+              </label>
+
+              <label class="block text-blue-300 py-2 font-bold mb-2" for="led_number">
+                LED数量<input
+                class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                id="led_number"
+                type="number"
+              />
+              </label>
+            </div>
+
+            <label class="block text-blue-300 py-2 font-bold mb-2" for="led_number">
+              动态更新  <input type="checkbox" name="dynamic" id="dynamic_enabled" value="enable" onChange="SettingDynamic()"/>
+            </label>
+
+            <div class="mb-4" id="dynamic_content" hidden>
+              <label class="block text-blue-300 py-2 font-bold mb-2" for="led_blink_color">
+                闪烁颜色<input
+                class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                id="led_blink_color"
+                type="color"
+                value="#e66465"
+              />
+              </label>
+
+              <label class="block text-blue-300 py-2 font-bold mb-2" for="led_blink_freq">
+                闪烁频率<select
+                class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                id="led_blink_freq"
+                type="number">
+                  <option value="slow">慢</option>
+                  <option value="medium">中</option>
+                  <option value="fast">高</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="flex items-center justify-between pt-4">
+              <button
+                class="bg-gradient-to-r from-purple-800 to-green-500 hover:from-pink-500 hover:to-green-500 text-white font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                type="button"
+                onclick="SettingLeds()">
+                设置
+              </button>
+            </div>
+          </form>
+        </div>
+    </div>
+  </body>
+  <script>
+    let num_of_leds_global = 0
+    let base_color_global = 0
+    let blink_color_global = 0
+    let blink_index_global = 0
+    let interval_global = null
+
+    SettingDynamic()
+    function SettingDynamic() {
+      blink_color_global = parseInt(document.getElementById("led_blink_color").value.substr(1), 16)
+      blink_index_global = 0
+
+      dynamic_enabled = document.getElementById("dynamic_enabled").checked
+      if (dynamic_enabled) {
+        document.getElementById("dynamic_content").hidden = false
+      } else {
+        document.getElementById("dynamic_content").hidden = true
+      }
+    }
+
+    async function SettingLeds() {
+      led_color = document.getElementById("led_color").value
+      led_number = document.getElementById("led_number").value
+      await setupAdvanceOutput()
+      await setLedsConstant(parseInt(led_color.substr(1), 16), parseInt(led_number))
+    }
+
+    async function setupAdvanceOutput() {
+      let request = '/hardware/operation'
+      let body = {
+        'event': 'now',
+        'actions': [["advanceoutput", 0, "setup", "one", "us", 2.5, 1.2],["advanceoutput", 0, "setup", "zero", "us", 2.5, 0.5]]
+      }
+      try {
+        const response = await fetch(request, {
+          method: 'post',
+          body: JSON.stringify(body)
+        })
+        .then(response => response.json())
+        .then(response => {
+          console.log(response)
+        })
+      } catch(err) {
+        console.error(`Error: ${err}`);
+      }
+    }
+
+    async function blink_fun() {
+      let request = '/hardware/operation'
+      let action = ["advanceoutput", 0, "start", 8]
+      action.push(num_of_leds_global * 3)   // each led need R, G and B field
+      color_red = (base_color_global >> 16) & 0xFF
+      color_green = (base_color_global >> 8) & 0xFF
+      color_blue = base_color_global & 0xFF
+      for (let i = 0; i < num_of_leds_global; i++)
+      {
+        if (i == blink_index_global) {
+          color_blink_red = (blink_color_global >> 16) & 0xFF
+          color_blink_green = (blink_color_global >> 8) & 0xFF
+          color_blink_blue = blink_color_global & 0xFF
+          action.push(color_blink_green)
+          action.push(color_blink_red)
+          action.push(color_blink_blue)
+        } else {
+          action.push(color_green)
+          action.push(color_red)
+          action.push(color_blue)
+        }
+      }
+      blink_index_global ++
+      blink_index_global %= num_of_leds_global
+
+      /* Send out request to update LED */
+      let body = {
+          'event': 'now',
+          'actions': [action]
+        }
+        try {
+          const response = await fetch(request, {
+            method: 'post',
+            body: JSON.stringify(body)
+          })
+          .then(response => response.json())
+          .then(response => {
+            console.log(response)
+          })
+        } catch(err) {
+          console.error(`Error: ${err}`);
+        }
+    }
+
+    async function setLedsConstant(color, number) {
+      color_red = (color >> 16) & 0xFF
+      color_green = (color >> 8) & 0xFF
+      color_blue = color & 0xFF
+
+      /* Global variable set up */
+      num_of_leds_global = number
+      base_color_global = color
+
+      let request = '/hardware/operation'
+      let action = ["advanceoutput", 0, "start", 8]
+
+      if (document.getElementById("dynamic_enabled").checked) {
+        /* start interval_global */
+        if (document.getElementById("led_blink_freq").value === "slow") {
+          interval_global = setInterval(blink_fun, 1000);
+        } else if (document.getElementById("led_blink_freq").value === 'medium') {
+          interval_global = setInterval(blink_fun, 750);
+        } else {
+          interval_global = setInterval(blink_fun, 500);
+        }
+
+      } else {
+        /* stop interval_global */
+        if (null != interval_global) {
+          clearInterval(interval_global)
+          interval_global = null
+        }
+
+        action.push(number * 3)   // each led need R, G and B field
+        for (let i = 0; i < number; i++)
+        {
+          action.push(color_green)
+          action.push(color_red)
+          action.push(color_blue)
+        }
+        let body = {
+          'event': 'now',
+          'actions': [action]
+        }
+        try {
+          const response = await fetch(request, {
+            method: 'post',
+            body: JSON.stringify(body)
+          })
+          .then(response => response.json())
+          .then(response => {
+            console.log(response)
+          })
+        } catch(err) {
+          console.error(`Error: ${err}`);
+        }
+      }
+    }
+  </script>
+</html>

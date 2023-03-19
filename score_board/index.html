@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard</title>
+    <link rel="stylesheet" href="https://bootswatch.com/4/lux/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/4ce64fec74.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <div class="container align-middle">
+        <!-- <h1 class="text-center mt-5 mb-5 time display-4 time">12:00<strong></strong></h1> -->
+        <h1 class="text-center mt-5 mb-2"><strong>分数</strong></h1>
+        <div class="row">
+            <div class="home col align-middle">
+                    <div class="text-center border-bottom pb-2"><h2><div class="homeName">主队</div><i class="fas fa-pen fa-xs float-right btn-secondary" onclick="homeNameInput()"></i></h2></div>
+                <div class="homeScore text-center mb-2 display-1"></div>
+                <div class="addHomeScore text-center">
+                    <button onclick="addOneHome()" class="btn btn-primary btn-sm m-1">一分</button>
+                    <button onclick="addTwoHome()" class="btn btn-primary btn-sm m-1">两分</button>
+                    <button onclick="addThreeHome()" class="btn btn-primary btn-sm m-1">三分</button>
+                    <button onclick="minusOneHome()" class="btn btn-warning btn-sm m-1">减一分</button>
+                    <button onclick="resetHome()" class="btn btn-danger btn-sm m-1">重置</button>
+
+                </div>
+            </div>
+            <div class="away col align-middle">
+                    <div class="text-center border-bottom pb-2"><h2><div class="awayName">客队</div><i class="fas fa-pen fa-xs float-right btn-secondary" onclick="awayNameInput()"></i></h2></div>
+                <div class="awayScore text-center mb-2 display-1"></div>
+                <div class="addAwayScore text-center">
+                    <button onclick="addOneAway()" class="btn btn-primary btn-sm m-1">一分</button>
+                    <button onclick="addTwoAway()" class="btn btn-primary btn-sm m-1">两分</button>
+                    <button onclick="addThreeAway()" class="btn btn-primary btn-sm m-1">三分</button>
+                    <button onclick="minusOneAway()" class="btn btn-warning btn-sm m-1">减一分</button>
+                    <button onclick="resetAway()" class="btn btn-danger btn-sm m-1">重置</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+//Selector
+let homeScore = document.querySelector(".homeScore");
+let awayScore = document.querySelector(".awayScore");
+let homeName = document.querySelector(".homeName");
+let awayName = document.querySelector(".awayName");
+let minute = new Date().getMinutes(0);
+
+//Initialize
+homeScore.innerHTML = 0;
+awayScore.innerHTML = 0;
+homeName.innerHTML = '主队';
+awayName.innerHTML = '客队';
+scores = [Number(homeScore.innerHTML), Number(awayScore.innerHTML)]
+
+DISPLAY_ZERO = 40
+DISPLAY_ONE = 235
+DISPLAY_TWO = 49
+DISPLAY_THREE = 161
+DISPLAY_FOUR = 226
+DISPLAY_FIVE = 164
+DISPLAY_SIX = 36
+DISPLAY_SEVEN = 233
+DISPLAY_EIGHT = 32
+DISPLAY_NINE = 224
+MAX_NUMBER = 100
+DIGITS_PER_NUMBER = 2
+SEVEN_SEGMENTS_TURN_OFF_VAL = 255
+
+seven_segment_display(scores)
+
+function push_number_digit(number, action) {
+    switch (number) {
+        default:
+        case 0:
+            action.push(DISPLAY_ZERO)
+            break;
+        case 1:
+            action.push(DISPLAY_ONE)
+            break;
+        case 2:
+            action.push(DISPLAY_TWO)
+            break;
+        case 3:
+            action.push(DISPLAY_THREE)
+            break;
+        case 4:
+            action.push(DISPLAY_FOUR)
+            break;
+        case 5:
+            action.push(DISPLAY_FIVE)
+            break;
+        case 6:
+            action.push(DISPLAY_SIX)
+            break;
+        case 7:
+            action.push(DISPLAY_SEVEN)
+            break;
+        case 8:
+            action.push(DISPLAY_EIGHT)
+            break;
+        case 9:
+            action.push(DISPLAY_NINE)
+            break;
+    }
+}
+
+async function seven_segment_display(numbers) {
+    let request = '/hardware/operation'
+    let action = ["spi",0,0,2,"lr","lsb",0]
+    action.push(numbers.length * DIGITS_PER_NUMBER)
+
+    numbers.forEach(number => {
+        if (number >= MAX_NUMBER || number < 0) {
+            throw '分数不能大于' + MAX_NUMBER + '，且不能小于0'
+        } else {
+
+            high_digit = parseInt(number / 10)
+            low_digit = parseInt(number % 10)
+
+            push_number_digit(low_digit, action)
+            if (high_digit != 0) {
+                push_number_digit(high_digit, action)
+            } else {
+                action.push(SEVEN_SEGMENTS_TURN_OFF_VAL)
+            }
+        }
+    })
+    let body = {
+        'event': 'now',
+        'actions': [['gpio',1,'output',0],['gpio',1,'output',1],action,['gpio',0, 'output',1],['gpio',0, 'output',0]]
+    }
+    try {
+        const response = await fetch(request, {
+        method: 'post',
+        body: JSON.stringify(body)
+        })
+        .then(response => response.json())
+        .then(response => {
+        console.log(response)
+        })
+    } catch(err) {
+        console.error(`Error: ${err}`);
+    }
+}
+
+
+//Button function : 主队
+async function addOneHome(){
+    try {
+        new_scores = scores.map((score)=>score)
+        new_scores[1] ++
+        await seven_segment_display(new_scores)
+        // all good
+        scores = new_scores
+        homeScore.innerHTML++;
+    } catch(e) {
+        alert(e)
+    }
+};
+
+async function addTwoHome(){
+    try {
+        new_scores = scores.map((score)=>score)
+        new_scores[1] += 2
+        await seven_segment_display(new_scores)
+        // all good
+        scores = new_scores
+        homeScore.innerHTML = Number(homeScore.innerHTML) + 2;
+    } catch(e) {
+        alert(e)
+    }
+};
+
+async function addThreeHome(){
+    try {
+        new_scores = scores.map((score)=>score)
+        new_scores[1] += 3
+        await seven_segment_display(new_scores)
+        // all good
+        scores = new_scores
+        homeScore.innerHTML = Number(homeScore.innerHTML) + 3;
+    } catch(e) {
+        alert(e)
+    }
+};
+
+async function minusOneHome(){
+    try {
+        new_scores = scores.map((score)=>score)
+        new_scores[1] --
+        await seven_segment_display(new_scores)
+        // all good
+        scores = new_scores
+        homeScore.innerHTML = Number(homeScore.innerHTML) - 1;
+    } catch(e) {
+        alert(e)
+    }
+}
+
+async function resetHome(){
+    try {
+        new_scores = scores.map((score)=>score)
+        new_scores[1] = 0
+        await seven_segment_display(new_scores)
+        // all good
+        scores = new_scores
+        homeScore.innerHTML = 0;
+    } catch(e) {
+        alert(e)
+    }
+};
+
+function homeNameInput(){
+    homeName.innerHTML = prompt("输入主队的名称?")
+}
+
+//Button function : 客队
+async function addOneAway(){
+    try {
+        new_scores = scores.map((score)=>score)
+        new_scores[0] ++
+        await seven_segment_display(new_scores)
+        // all good
+        scores = new_scores
+        awayScore.innerHTML++
+    } catch(e) {
+        alert(e)
+    }
+};
+
+async function addTwoAway(){
+    try {
+        new_scores = scores.map((score)=>score)
+        new_scores[0] += 2
+        await seven_segment_display(new_scores)
+        // all good
+        scores = new_scores
+        awayScore.innerHTML = Number(awayScore.innerHTML) + 2;
+    } catch(e) {
+        alert(e)
+    }
+};
+
+async function addThreeAway(){
+    try {
+        new_scores = scores.map((score)=>score)
+        new_scores[0] += 3
+        await seven_segment_display(new_scores)
+        // all good
+        scores = new_scores
+        awayScore.innerHTML = Number(awayScore.innerHTML) + 3;
+    } catch(e) {
+        alert(e)
+    }
+};
+
+async function minusOneAway(){
+    try {
+        new_scores = scores.map((score)=>score)
+        new_scores[0] --
+        await seven_segment_display(new_scores)
+        // all good
+        scores = new_scores
+        awayScore.innerHTML = Number(awayScore.innerHTML) - 1;
+    } catch(e) {
+        alert(e)
+    }
+}
+
+async function resetAway(){
+    try {
+        new_scores = scores.map((score)=>score)
+        new_scores[0] = 0
+        await seven_segment_display(new_scores)
+        // all good
+        scores = new_scores
+        awayScore.innerHTML = 0;
+    } catch(e) {
+        alert(e)
+    }
+};
+
+function awayNameInput(){
+    awayName.innerHTML = prompt("输入客队的名称?")
+
+}
+</script>
+</html>
