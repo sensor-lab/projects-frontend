@@ -1,6 +1,6 @@
 <html>
 <head>
-
+    <meta charset="utf-8">
 </head>
 
 <style>
@@ -224,11 +224,18 @@ body {
     <button class="Fs_Note" OnClick="submitHelper.submitClick(this, 'fs')">F#</button>
     <button class="Gs_Note" OnClick="submitHelper.submitClick(this, 'gs')">G#</button>
     <button class="As_Note" OnClick="submitHelper.submitClick(this, 'as')">A#</button>
-    <div id="div1"><h1 style="color: white; margin-left: 350px"><b>锐客创新-网页钢琴</b></h1></div>
-    <div id="volumn" style="margin-left: 350px">
-        <span style="color:white">音量</span>
-        <input type="range" min="1" max="100" value="50" class="slider" id="myRange" onChange="volumnChange(this.value)">
+    <div id="div1"><h1 style="color: white; margin-left: 350px"><b>传感器实验室-网页钢琴</b></h1></div>
+    <div>
+        <div id="volumn" style="margin-left: 350px">
+            <span style="color:white">音量</span>
+            <input type="range" min="1" max="100" value="50" class="slider" id="myRange" onChange="volumnChange(this.value)">
+        </div>
+        <div id="gpio_index" style="margin-left: 350px">
+            <span style="color:white">引脚</span>
+            <input type="text" id="gpioSelection" onChange="gpioSelect(this.value)">
+        </div>
     </div>
+    
 </body>
 
 <script>
@@ -242,121 +249,110 @@ body {
 // }
 
 var volumn = 50
+var gpio_index = 0
 
 function volumnChange(new_volumn) {
     volumn = new_volumn
 }
 
+function gpioSelect(param) {
+    console.log(param)
+    gpio_index = param
+}
+
 var submitHelper = {
 
     tone_map: {c: {
-        unit: 'us',
-        period: 3822,
-        duration_a: 1500,
+        frequency: 261,
+        duration_a: 500,
         duration_b: 0,
         duration_c: 0,
-        running_time: 30
-    }, d: {
-        unit: 'us',
-        period: 3405,
-        duration_a: 1500,
-        duration_b: 0,
-        duration_c: 0,
-        running_time: 30
-    }, e: {
-        unit: 'us',
-        period: 3033,
-        duration_a: 1500,
-        duration_b: 0,
-        duration_c: 0,
-        running_time: 30
-    }, f: {
-        unit: 'us',
-        period: 2863,
-        duration_a: 1500,
-        duration_b: 0,
-        duration_c: 0,
-        running_time: 30
-    }, g: {
-        unit: 'us',
-        period: 2551,
-        duration_a: 1500,
-        duration_b: 0,
-        duration_c: 0,
-        running_time: 30
-    }, a: {
-        unit: 'us',
-        period: 2272,
-        duration_a: 1500,
-        duration_b: 0,
-        duration_c: 0,
-        running_time: 30
-    }, b: {
-        unit: 'us',
-        period: 2024,
-        duration_a: 1500,
-        duration_b: 0,
-        duration_c: 0,
-        running_time: 30
-    }, c5: {
-        unit: 'us',
-        period: 1911,
-        duration_a: 1500,
-        duration_b: 0,
-        duration_c: 0,
-        running_time: 30
+        running_time: 0.1
     }, cs: {
-        unit: 'us',
-        period: 3607,
-        duration_a: 1500,
+        frequency: 277,
+        duration_a: 500,
         duration_b: 0,
         duration_c: 0,
-        running_time: 30
+        running_time: 0.1
+    }, d: {
+        frequency: 293,
+        duration_a: 500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 0.1
     }, ds: {
-        unit: 'us',
-        period: 3214,
-        duration_a: 1500,
+        frequency: 311,
+        duration_a: 500,
         duration_b: 0,
         duration_c: 0,
-        running_time: 30
+        running_time: 0.1
+    }, e: {
+        frequency: 329,
+        duration_a: 500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 0.1
+    }, f: {
+        frequency: 349,
+        duration_a: 500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 0.1
     }, fs: {
-        unit: 'us',
-        period: 2702,
-        duration_a: 1500,
+        frequency: 369,
+        duration_a: 500,
         duration_b: 0,
         duration_c: 0,
-        running_time: 30
+        running_time: 0.1
+    }, g: {
+        frequency: 392,
+        duration_a: 500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 0.1
     }, gs: {
-        unit: 'us',
-        period: 2407,
-        duration_a: 1500,
+        frequency: 415,
+        duration_a: 500,
         duration_b: 0,
         duration_c: 0,
-        running_time: 30
+        running_time: 0.1
+    }, a: {
+        frequency: 440,
+        duration_a: 500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 0.1
     }, as: {
-        unit: 'us',
-        period: 2145,
-        duration_a: 1500,
+        frequency: 466,
+        duration_a: 500,
         duration_b: 0,
         duration_c: 0,
-        running_time: 30
+        running_time: 0.1
+    }, b: {
+        frequency: 493,
+        duration_a: 500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 0.1
+    }, c5: {
+        frequency: 523,
+        duration_a: 500,
+        duration_b: 0,
+        duration_c: 0,
+        running_time: 0.1
     }},
 
     submitClick: async function(object, tone) {
         let request = '/hardware/operation'
         let body = {
         'event': 'now',
-        'actions': [['pwm', 1, 'enabled', this.tone_map[tone].unit, this.tone_map[tone].period, parseInt(this.tone_map[tone].period * 0.5 * volumn / 100),
-                    this.tone_map[tone].duration_b, this.tone_map[tone].duration_c, this.tone_map[tone].running_time]]
+        'actions': [['pwm', 0, parseInt(this.tone_map[tone].frequency), parseFloat(this.tone_map[tone].running_time),  parseInt(gpio_index), this.tone_map[tone].duration_a, 0, 0, 0, 0]]
         }
         try {
         const response = await fetch(request, {
             method: 'post',
             body: JSON.stringify(body)
-        }).then(response => response.text())
-        .then(response => {
-            document.getElementById('mainResponse').innerHTML += timerHelpers.responseDisplay(response);
-        });
+        }).then(response => response.text());
         } catch(err) {
             console.error(`Error: ${err}`);
         }
