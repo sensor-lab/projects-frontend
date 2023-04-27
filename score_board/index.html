@@ -42,6 +42,22 @@
 </body>
 
 <script>
+var ser_pin=parseInt(prompt("SER引脚号","0"));
+var srclk_pin=0;
+var rclk_pin=0;
+var srclr_pin=0;
+if (ser_pin >= 12) {
+    // this will be corrected in the next PCB release
+    srclk_pin=ser_pin - 1;
+    rclk_pin=ser_pin - 2;
+    srclr_pin=ser_pin - 3;
+} else {
+    srclk_pin=ser_pin + 1;
+    rclk_pin=ser_pin + 2;
+    srclr_pin=ser_pin + 3;
+}
+
+
 //Selector
 let homeScore = document.querySelector(".homeScore");
 let awayScore = document.querySelector(".awayScore");
@@ -56,18 +72,18 @@ homeName.innerHTML = '主队';
 awayName.innerHTML = '客队';
 scores = [Number(homeScore.innerHTML), Number(awayScore.innerHTML)]
 
-DISPLAY_ZERO = 40
-DISPLAY_ONE = 235
-DISPLAY_TWO = 49
-DISPLAY_THREE = 161
-DISPLAY_FOUR = 226
-DISPLAY_FIVE = 164
-DISPLAY_SIX = 36
-DISPLAY_SEVEN = 233
-DISPLAY_EIGHT = 32
-DISPLAY_NINE = 224
-MAX_NUMBER = 100
-DIGITS_PER_NUMBER = 2
+DISPLAY_ZERO = 129
+DISPLAY_ONE = 237
+DISPLAY_TWO = 67
+DISPLAY_THREE = 73
+DISPLAY_FOUR = 45
+DISPLAY_FIVE = 25
+DISPLAY_SIX = 17
+DISPLAY_SEVEN = 205
+DISPLAY_EIGHT = 1
+DISPLAY_NINE = 9
+MAX_NUMBER = 1000
+DIGITS_PER_NUMBER = 3
 SEVEN_SEGMENTS_TURN_OFF_VAL = 255
 
 seven_segment_display(scores)
@@ -110,7 +126,7 @@ function push_number_digit(number, action) {
 
 async function seven_segment_display(numbers) {
     let request = '/hardware/operation'
-    let action = ["spi",0,0,2,"lr","lsb",0]
+    let action = ["spi",0,ser_pin,-1,srclk_pin,-1,500,0,0]
     action.push(numbers.length * DIGITS_PER_NUMBER)
 
     numbers.forEach(number => {
@@ -118,20 +134,27 @@ async function seven_segment_display(numbers) {
             throw '分数不能大于' + MAX_NUMBER + '，且不能小于0'
         } else {
 
-            high_digit = parseInt(number / 10)
+            high_digit = parseInt(number / 100)
+            mid_digit = parseInt((number / 10) % 10)
             low_digit = parseInt(number % 10)
 
             push_number_digit(low_digit, action)
             if (high_digit != 0) {
+                push_number_digit(mid_digit, action)
                 push_number_digit(high_digit, action)
             } else {
+                if (mid_digit != 0) {
+                    push_number_digit(mid_digit, action)
+                } else {
+                    action.push(SEVEN_SEGMENTS_TURN_OFF_VAL)
+                }
                 action.push(SEVEN_SEGMENTS_TURN_OFF_VAL)
             }
         }
     })
     let body = {
         'event': 'now',
-        'actions': [['gpio',1,'output',0],['gpio',1,'output',1],action,['gpio',0, 'output',1],['gpio',0, 'output',0]]
+        'actions': [['gpio',srclr_pin,'output',0],['gpio',srclr_pin,'output',1],action,['gpio',rclk_pin,'output',1],['gpio',rclk_pin,'output',0]]
     }
     try {
         const response = await fetch(request, {
@@ -156,7 +179,7 @@ async function addOneHome(){
         await seven_segment_display(new_scores)
         // all good
         scores = new_scores
-        homeScore.innerHTML++;
+        homeScore.innerHTML = scores[1];
     } catch(e) {
         alert(e)
     }
@@ -169,7 +192,7 @@ async function addTwoHome(){
         await seven_segment_display(new_scores)
         // all good
         scores = new_scores
-        homeScore.innerHTML = Number(homeScore.innerHTML) + 2;
+        homeScore.innerHTML = scores[1];
     } catch(e) {
         alert(e)
     }
@@ -182,7 +205,7 @@ async function addThreeHome(){
         await seven_segment_display(new_scores)
         // all good
         scores = new_scores
-        homeScore.innerHTML = Number(homeScore.innerHTML) + 3;
+        homeScore.innerHTML = scores[1];
     } catch(e) {
         alert(e)
     }
@@ -195,7 +218,7 @@ async function minusOneHome(){
         await seven_segment_display(new_scores)
         // all good
         scores = new_scores
-        homeScore.innerHTML = Number(homeScore.innerHTML) - 1;
+        homeScore.innerHTML = scores[1];
     } catch(e) {
         alert(e)
     }
@@ -208,7 +231,7 @@ async function resetHome(){
         await seven_segment_display(new_scores)
         // all good
         scores = new_scores
-        homeScore.innerHTML = 0;
+        homeScore.innerHTML = scores[1];;
     } catch(e) {
         alert(e)
     }
@@ -226,7 +249,7 @@ async function addOneAway(){
         await seven_segment_display(new_scores)
         // all good
         scores = new_scores
-        awayScore.innerHTML++
+        awayScore.innerHTML = scores[0];
     } catch(e) {
         alert(e)
     }
@@ -239,7 +262,7 @@ async function addTwoAway(){
         await seven_segment_display(new_scores)
         // all good
         scores = new_scores
-        awayScore.innerHTML = Number(awayScore.innerHTML) + 2;
+        awayScore.innerHTML = scores[0];
     } catch(e) {
         alert(e)
     }
@@ -252,7 +275,7 @@ async function addThreeAway(){
         await seven_segment_display(new_scores)
         // all good
         scores = new_scores
-        awayScore.innerHTML = Number(awayScore.innerHTML) + 3;
+        awayScore.innerHTML = scores[0];
     } catch(e) {
         alert(e)
     }
@@ -265,7 +288,7 @@ async function minusOneAway(){
         await seven_segment_display(new_scores)
         // all good
         scores = new_scores
-        awayScore.innerHTML = Number(awayScore.innerHTML) - 1;
+        awayScore.innerHTML = scores[0];
     } catch(e) {
         alert(e)
     }
@@ -278,7 +301,7 @@ async function resetAway(){
         await seven_segment_display(new_scores)
         // all good
         scores = new_scores
-        awayScore.innerHTML = 0;
+        awayScore.innerHTML = scores[0];
     } catch(e) {
         alert(e)
     }
