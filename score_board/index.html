@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scoreboard</title>
-    <link rel="stylesheet" href="https://bootswatch.com/4/lux/bootstrap.min.css">
-    <script src="https://kit.fontawesome.com/4ce64fec74.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./bootstrap.min.css">
+    <script src="./4ce64fec74.js" crossorigin="anonymous"></script>
 
 </head>
 <body>
@@ -42,11 +42,13 @@
 </body>
 
 <script>
-var ser_pin=parseInt(prompt("SER引脚号","0"));
+var ser_pin=parseInt(prompt("请将两个7段数码管插板串联，然后插在平台引脚上，并输入SER引脚号：","0"));
 var srclk_pin=0;
 var rclk_pin=0;
 var srclr_pin=0;
-if (ser_pin >= 12) {
+if (ser_pin < 0 || ser_pin > 23) {
+    alert("请输入正确的SER引脚号，需要在0-23之间");
+} else if (ser_pin >= 12) {
     // this will be corrected in the next PCB release
     srclk_pin=ser_pin - 1;
     rclk_pin=ser_pin - 2;

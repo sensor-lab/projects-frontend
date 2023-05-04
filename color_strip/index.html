@@ -11,14 +11,6 @@
     <link href="./tailwind.min.css" rel="stylesheet"/>
     <!--Replace with your tailwind.css once created-->
     <link href="./custom-forms.min.css" rel="stylesheet" />
-
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
-
-      html {
-        font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-      }
-    </style>
   </head>
 
   <body class="leading-normal tracking-normal text-indigo-400 m-6 bg-cover bg-fixed" style="background-image: url('header.png');">
@@ -47,13 +39,6 @@
 
           <form class="bg-gray-900 opacity-75 w-full shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
             <div class="mb-4">
-              <label class="block text-blue-300 py-2 font-bold mb-2" for="gpio_index">
-                输入输出引脚<input
-                class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
-                id="gpio_index"
-                type="number"
-              />
-              </label>
 
               <label class="block text-blue-300 py-2 font-bold mb-2" for="led_color">
                 灯带颜色<input
@@ -117,7 +102,11 @@
     let blink_color_global = 0
     let blink_index_global = 0
     let interval_global = null
-    let gpio_index = 0
+    var gpio_index=parseInt(prompt("请将LED灯带和电平转换插板连接，并将电平转换插板插入平台。输入引脚号：","0"));
+
+    if (gpio_index < 0 || gpio_index > 23) {
+        alert("请输入正确的引脚号，需要在0-23之间。")
+    }
 
     SettingDynamic()
     function SettingDynamic() {
@@ -133,18 +122,17 @@
     }
 
     async function SettingLeds() {
-      gpio_index = document.getElementById("gpio_index").value 
       led_color = document.getElementById("led_color").value
       led_number = document.getElementById("led_number").value
-      await setupAdvanceOutput(parseInt(gpio_index))
-      await setLedsConstant(parseInt(gpio_index), parseInt(led_color.substr(1), 16), parseInt(led_number))
+      await setupAdvanceOutput()
+      await setLedsConstant(parseInt(led_color.substr(1), 16), parseInt(led_number))
     }
 
-    async function setupAdvanceOutput(gpio_index) {
+    async function setupAdvanceOutput() {
       let request = '/hardware/operation'
       let body = {
         'event': 'now',
-        'actions': [["advance_output", gpio_index, "setup","us","zero", "2.5","0.7", "one","2.5","1.2"]]
+        'actions': [["advance_output", gpio_index, "setup","us","zero", 2.5,0.5, "one",2.5,1.2]]
       }
       try {
         const response = await fetch(request, {
@@ -160,7 +148,7 @@
       }
     }
 
-    async function blink_fun(gpio_index) {
+    async function blink_fun() {
       let request = '/hardware/operation'
       let action = ["advance_output", gpio_index, "start"]
       action.push(num_of_leds_global * 3)   // each led need R, G and B field
@@ -204,7 +192,7 @@
         }
     }
 
-    async function setLedsConstant(gpio_index, color, number) {
+    async function setLedsConstant(color, number) {
       color_red = (color >> 16) & 0xFF
       color_green = (color >> 8) & 0xFF
       color_blue = color & 0xFF
@@ -212,6 +200,8 @@
       /* Global variable set up */
       num_of_leds_global = number
       base_color_global = color
+
+      console.log("debug:" + num_of_leds_global)
 
       let request = '/hardware/operation'
       let action = ["advance_output", gpio_index, "start"]
