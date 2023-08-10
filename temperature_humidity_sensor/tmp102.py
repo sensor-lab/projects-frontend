@@ -29,15 +29,16 @@ from datetime import datetime
 from pytz import timezone
 
 # user requires to redefine the following 3 variables
-SDA_PIN = 20
-SCL_PIN = 21
-PLATFORM_IP = "192.168.1.124"
+SDA_PIN = 0
+SCL_PIN = 1
+PLATFORM_IP = "192.168.4.1"
+
 
 def read_temp():
     url = f"http://{PLATFORM_IP}/hardware/operation"
     request_data = {
-        "event":"now",
-        "actions": [["i2c", 0, "write", SDA_PIN, SCL_PIN, 50, 72, 0, -1, 0],["i2c", 0, "read", SDA_PIN, SCL_PIN, 50, 72, -1, -1, 2]]
+        "event": "now",
+        "actions": [["i2c", 0, "write", SDA_PIN, SCL_PIN, 50, 72, 0, -1, 0], ["i2c", 0, "read", SDA_PIN, SCL_PIN, 50, 72, -1, -1, 2]]
     }
     r = requests.post(url, data=json.dumps(request_data)).json()
     temp_val = ((r["result"][1][0] << 8) + r["result"][1][1]) >> 4
@@ -54,7 +55,8 @@ def main(args):
         while True:
             temp = read_temp()
             pacific_tz = timezone("US/Pacific")
-            time_str = datetime.now(tz=pacific_tz).strftime("%m/%d/%Y %H:%M:%S")
+            time_str = datetime.now(
+                tz=pacific_tz).strftime("%m/%d/%Y %H:%M:%S")
             temp_log = f"{time_str} : {temp}\r\n"
             with open(args.file_name, "a") as f:
                 f.write(temp_log)
@@ -63,6 +65,7 @@ def main(args):
     else:
         temp = read_temp()
         print(f"temperature: {temp} C")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
