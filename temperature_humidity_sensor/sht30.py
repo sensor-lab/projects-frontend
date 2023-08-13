@@ -11,8 +11,8 @@ from datetime import datetime
 from pytz import timezone
 
 # user requires to redefine the following 3 variables
-SDA_PIN = 19
-SCL_PIN = 18
+SDA_PIN = 4
+SCL_PIN = 5
 ADDR_PIN = 16
 PLATFORM_IP = "192.168.4.1"
 

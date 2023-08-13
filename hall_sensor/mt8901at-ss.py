@@ -10,7 +10,7 @@ from pytz import timezone
 # user requires to redefine the following 3 variables
 HALL_OUTPUT1_PIN = 11
 HALL_OUTPUT2_PIN = 10
-PLATFORM_IP = "192.168.1.129"
+PLATFORM_IP = "192.168.4.1"
 
 
 def read_hall_value():
@@ -19,7 +19,7 @@ def read_hall_value():
     url = f"http://{PLATFORM_IP}/hardware/operation"
     request_data = {
         "event": "now",
-        "actions": [["gpio", 19, "input", 0], ["gpio", 18, "input", 0]]
+        "actions": [["gpio", HALL_OUTPUT1_PIN, "input", 0], ["gpio", HALL_OUTPUT2_PIN, "input", 0]]
     }
     r = requests.post(url, data=json.dumps(request_data)).json()
     hall_zero_val = r["result"][0][0]
