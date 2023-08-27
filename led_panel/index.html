@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <title>灯板控制器</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Press+Start+2P">
+    <link rel="stylesheet" href="./style.css">
+    <!-- <link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet"> -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+    <meta charset="utf-8">
+</head>
+
+<body class="squares-bg">
+    <div class="header flyItIn">
+        <h1>传感器实验室：灯板控制器</h1>
+    </div>
+    <div class="gridContainer">
+        <div class="gridControl">
+            <h2>设置灯板尺寸</h2>
+            <form id="sizePicker" name="gridSize">
+                <span class="gridSizeLabel">灯板高度：</span><span id="gridHeightDisplay"> 8</span>
+                <input type="range" id="inputHeight" class="slider" title="设置画板高度" name="height" min="1"
+                    max="50" value="8">
+                <br>
+                <span class="gridSizeLabel">灯板宽度：</span><span id="gridWidthDisplay"> 32</span>
+                <input type="range" id="inputWidth" class="slider" title="设置画板宽度" name="width" min="1" max="50"
+                    value="32">
+                <br>
+                <div class="gridCreateClear">
+                    <input class="button" type="submit" id="createGrid" value="建立画板" name="submitGrid">
+                    <button class="button" type="button" id="clearGrid" value="Clear">
+                        清除画板
+                    </button>
+                </div>
+                <div class="setLedPanel">
+                    <input class="button" type="submit" id="setLedPanel" value="设置灯板" name="submitLedPanel">
+                </div>
+            </form>
+
+            <h2>选择颜色： </h2>
+            <input type="color" id="colorPicker" value="#ff0000" title="Set PAINT color">
+            <br>
+            <h2>模式：</h2><span id="modeDisplay" class="paintOrErase"> 画图</span>
+            <br>
+            <div id="mode">
+                <button id="paintBtn" class="button paint" title="设置为画图模式" type="button">
+                    <i class="fas fa-paint-brush paint"></i>
+                </button>
+                <button id="eraseBtn" class="button erase" title="设置为清除模式" type="button">
+                    <i class="fas fa-eraser erase"></i>
+                </button>
+            </div> <!--end mode div: for mode button listener -->
+        </div> <!-- end gridControl -->
+        <div id="gridCanvas" class="gridCanvas rotationTime">
+            <h2>画板</h2>
+            <table id="pixelCanvas" class="flyItIn2"></table>
+            <p id="legend" class="noLegend"><em>（选择画图模式或者清除模式）</em>
+            </p>
+        </div> <!-- end gridCanvas -->
+    </div> <!-- end cssGirdcontainer -->
+    <script src="./designs.js"></script>
+</body>
+
+</html>
