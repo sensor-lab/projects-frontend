@@ -11,10 +11,10 @@ from datetime import datetime
 from pytz import timezone
 
 # user requires to redefine the following 3 variables
-SDA_PIN = 4
-SCL_PIN = 5
+SDA_PIN = 0
+SCL_PIN = 1
 ADDR_PIN = 16
-PLATFORM_IP = "192.168.4.1"
+PLATFORM_IP = "192.168.1.120"
 
 
 def setup_address():
@@ -52,7 +52,7 @@ def read_single_shot_result():
 
 
 def main(args):
-    setup_address()
+    #setup_address()
     if args.file_name != None:
         # empty file
         open(str(args.file_name) + "_temperature", "w")
