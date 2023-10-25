@@ -202,7 +202,7 @@ class LoraRfm98:
             mode = self._register_read(Rfm98BaseReg.OP_MODE)[0]
             if mode != 0b10000101:
                 self._register_write(Rfm98LoraReg.FIFO_ADDR_PTR, 0)
-                self._register_write(Rfm98BaseReg.OP_MODE, 0b10000101)  # LONG_RANGE_MODE | RX_SINGLE
+                self._register_write(Rfm98BaseReg.OP_MODE, 0b10000101)  # LONG_RANGE_MODE | RX_CONTINUOUS
             packet_len = self._has_pending_packet()
             if packet_len > 0:
                 read_data = self._read_packet(packet_len)
