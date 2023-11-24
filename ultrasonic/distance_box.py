@@ -15,6 +15,7 @@ ULTRASONIC_CAPTURE_NUMBER_LOOPS = 15
 ULTRASONIC_THRESHOLD_MIDDLE = 14000
 ULTRASONIC_THRESHOLD_CLOSE = 3000
 STABLE_COUNT_VAL = 2        # 2 consecutive
+STABLE_COUNT_TURNOFF_LED_THRESHOLD = 10
 
 class LedState(Enum):
     LED_OFF = 1
@@ -57,68 +58,96 @@ def led_strip_color(platform_ip, led_pin_id, num_led, red, green, blue):
     request_data["actions"][0].extend(colors)
     result = requests.post(url, data=json.dumps(request_data)).json()["result"]
 
-
-
-LED_COLOR_SCHEMA = [
-    [20, 0, 0],
-    [0, 10, 0],
-    [0, 0, 10],
-    [0, 10, 10],
-    [10, 10, 0],
-    [10, 0, 10],
-    [20, 0, 10],
-    [20, 10, 0],
-    [0, 20, 10],
-    [10, 10, 10],
-    [10, 20, 0],
-    [0, 20, 0],
-    [10, 0, 20],
-    [0, 0, 20],
-    [20, 20, 20],
-    [5, 5, 5],
-]
-
 def main(ip, ultrasonic_pin, led_pin):
-    led_state = False
+    led_state = LedState.LED_OFF
     far_stable_counter = 0
     middle_stable_counter = 0
     close_stable_counter = 0
+    blink_counter = 0
 
     led_strip_setup(ip, led_pin)
+    led_strip_color(ip, led_pin, NUMBER_LEDS, 0, 0, 0)
+    
     while True:
         echo_us = read_ultrasonic(ip, ultrasonic_pin, ultrasonic_pin)
 
-        if echo_us > ULTRASONIC_THRESHOLD_MIDDLE:
-            far_stable_counter += 1
-            if far_stable_counter >= STABLE_COUNT_VAL:
+        if led_state == LedState.LED_OFF:
+            if echo_us > ULTRASONIC_THRESHOLD_MIDDLE:
+                far_stable_counter = 0
                 middle_stable_counter = 0
                 close_stable_counter = 0
-                if led_state != LedState.LED_OFF:
-                    led_strip_color(ip, led_pin, NUMBER_LEDS, 0, 0, 0)
-                    time.sleep(0.5)
-                    led_state = LedState.LED_OFF
-        elif echo_us > ULTRASONIC_THRESHOLD_CLOSE:
-            middle_stable_counter += 1
-            if middle_stable_counter >= STABLE_COUNT_VAL:
+            elif echo_us > ULTRASONIC_THRESHOLD_CLOSE:
+                middle_stable_counter += 1
                 far_stable_counter = 0
                 close_stable_counter = 0
-                if led_state != LedState.LED_RED:
+                if middle_stable_counter >= STABLE_COUNT_VAL:
                     led_strip_color(ip, led_pin, NUMBER_LEDS, 30, 0, 0)
-                    time.sleep(0.5)
+                    middle_stable_counter = 0
                     led_state = LedState.LED_RED
-        else:
-            close_stable_counter += 1
-            if close_stable_counter >= STABLE_COUNT_VAL:
+            else:
+                close_stable_counter += 1
+                middle_stable_counter = 0
+                far_stable_counter = 0
+                if close_stable_counter >= STABLE_COUNT_VAL:
+                    if blink_counter % 2 == 0:
+                        led_strip_color(ip, led_pin, NUMBER_LEDS, 0, 20, 0)
+                    else:
+                        led_strip_color(ip, led_pin, NUMBER_LEDS, 20, 20, 0)
+                    blink_counter += 1
+                    led_state = LedState.LED_BLINK
+        elif led_state == LedState.LED_RED:
+            if echo_us > ULTRASONIC_THRESHOLD_MIDDLE:
+                close_stable_counter = 0
+                middle_stable_counter = 0
+                far_stable_counter += 1
+                if far_stable_counter >= STABLE_COUNT_TURNOFF_LED_THRESHOLD:
+                    far_stable_counter = 0
+                    led_strip_color(ip, led_pin, NUMBER_LEDS, 0, 0, 0)
+                    led_state = LedState.LED_OFF
+            elif echo_us > ULTRASONIC_THRESHOLD_CLOSE:
                 far_stable_counter = 0
                 middle_stable_counter = 0
-                led_strip_color(ip, led_pin, NUMBER_LEDS, 0, 20, 0)
+                close_stable_counter = 0
+            else:
+                far_stable_counter = 0
+                middle_stable_counter = 0
+                close_stable_counter += 1
+                if close_stable_counter >= STABLE_COUNT_VAL:
+                    if blink_counter % 2 == 0:
+                        led_strip_color(ip, led_pin, NUMBER_LEDS, 0, 20, 0)
+                    else:
+                        led_strip_color(ip, led_pin, NUMBER_LEDS, 20, 20, 0)
+                    blink_counter += 1
+                    led_state = LedState.LED_BLINK
+                    time.sleep(0.4)
+        elif led_state == LedState.LED_BLINK:
+            if echo_us > ULTRASONIC_THRESHOLD_MIDDLE:
+                close_stable_counter = 0
+                middle_stable_counter = 0
+                far_stable_counter += 1
+                if far_stable_counter >= STABLE_COUNT_TURNOFF_LED_THRESHOLD:
+                    far_stable_counter = 0
+                    led_strip_color(ip, led_pin, NUMBER_LEDS, 0, 0, 0)
+                    led_state = LedState.LED_OFF
+            elif echo_us > ULTRASONIC_THRESHOLD_CLOSE:
+                close_stable_counter = 0
+                far_stable_counter = 0
+                middle_stable_counter += 1
+                if middle_stable_counter >= STABLE_COUNT_VAL:
+                    led_strip_color(ip, led_pin, NUMBER_LEDS, 30, 0, 0)
+                    middle_stable_counter = 0
+                    led_state = LedState.LED_RED
+            else:
+                far_stable_counter = 0
+                middle_stable_counter = 0
+                close_stable_counter = 0
+                if blink_counter % 2 == 0:
+                    led_strip_color(ip, led_pin, NUMBER_LEDS, 0, 20, 0)
+                else:
+                    led_strip_color(ip, led_pin, NUMBER_LEDS, 20, 20, 0)
+                blink_counter += 1
                 time.sleep(0.4)
-                led_strip_color(ip, led_pin, NUMBER_LEDS, 20, 20, 0)
-                time.sleep(0.4)
-                led_state = LedState.LED_BLINK
-
-
-
+        
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
