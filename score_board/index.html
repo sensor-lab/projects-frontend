@@ -128,7 +128,7 @@ function push_number_digit(number, action) {
 
 async function seven_segment_display(numbers) {
     let request = '/hardware/operation'
-    let action = ["spi",0,ser_pin,-1,srclk_pin,-1,500,0,0]
+    let action = ["spi",0,ser_pin,-1,srclk_pin,-1,500,0,0,0]
     action.push(numbers.length * DIGITS_PER_NUMBER)
 
     numbers.forEach(number => {

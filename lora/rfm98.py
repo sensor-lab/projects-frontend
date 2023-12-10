@@ -109,7 +109,7 @@ class LoraRfm98:
         reg_val = reg.value & 0x7f
         request_data = {
             "event": "now",
-            "actions": [["spi", 0, self.mosi_pin, self.miso_pin, self.sck_pin, self.cs_pin, self.spi_speed, self.spi_mode, read_len, 1, reg_val]]
+            "actions": [["spi", 0, self.mosi_pin, self.miso_pin, self.sck_pin, self.cs_pin, self.spi_speed, self.spi_mode, read_len, 1, 1, reg_val]]
         }
         r = requests.post(url, data=json.dumps(request_data)).json()
         return r["result"][0]
@@ -120,13 +120,13 @@ class LoraRfm98:
         if hasattr(data, '__len__'):
             request_data = {
                 "event": "now",
-                "actions": [["spi", 0, self.mosi_pin, self.miso_pin, self.sck_pin, self.cs_pin, self.spi_speed, self.spi_mode, 0, len(data) + 1, reg_val]]
+                "actions": [["spi", 0, self.mosi_pin, self.miso_pin, self.sck_pin, self.cs_pin, self.spi_speed, self.spi_mode, 0, 0, len(data) + 1, reg_val]]
             }
             request_data["actions"][0].extend(data)
         else:
             request_data = {
                 "event": "now",
-                "actions": [["spi", 0, self.mosi_pin, self.miso_pin, self.sck_pin, self.cs_pin, self.spi_speed, self.spi_mode, 0, 2, reg_val, data]]
+                "actions": [["spi", 0, self.mosi_pin, self.miso_pin, self.sck_pin, self.cs_pin, self.spi_speed, self.spi_mode, 0, 0, 2, reg_val, data]]
             }
         r1 = requests.post(url, data=json.dumps(request_data))
         r = r1.json()
@@ -210,6 +210,8 @@ class LoraRfm98:
             current_second = time.time()
             if current_second > end_time_second:
                 break
+            else:
+                time.sleep(0.5)
 
     def dump_all_regs(self):
         r = self._register_read(Rfm98BaseReg.VERSION)
@@ -219,9 +221,14 @@ def main(args):
     lora_rfm98 = LoraRfm98(args.ip, args.mosi_pin)
     lora_rfm98.begin()
     if args.receiver:
-        lora_rfm98.receive(20)
+        lora_rfm98.receive(50)
     else:
-        lora_rfm98.transmit("hello".encode())
+        index = 0
+        while True:
+            lora_rfm98.transmit(f"hello {index}".encode())
+            index += 1
+            time.sleep(1)
+            logger.info("message sends complete")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
