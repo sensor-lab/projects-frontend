@@ -109,7 +109,7 @@ class LoraRfm98:
         reg_val = reg.value & 0x7f
         request_data = {
             "event": "now",
-            "actions": [["spi", 0, self.mosi_pin, self.miso_pin, self.sck_pin, self.cs_pin, self.spi_speed, self.spi_mode, read_len, 1, 1, reg_val]]
+            "actions": [["spi", 0, self.mosi_pin, self.miso_pin, self.sck_pin, self.cs_pin, self.spi_speed, self.spi_mode, 1, read_len, 1, reg_val]]
         }
         r = requests.post(url, data=json.dumps(request_data)).json()
         return r["result"][0]
